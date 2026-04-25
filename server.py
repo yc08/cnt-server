@@ -1,14 +1,24 @@
 from http.server import HTTPServer, BaseHTTPRequestHandler
+import json
 
 count = 0
 
+
 class CounterHandler(BaseHTTPRequestHandler):
     def do_GET(self):
+        # API endpoint to get current count
+        if self.path == '/api/count':
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json; charset=utf-8')
+            self.end_headers()
+            self.wfile.write(json.dumps({'count': count}).encode())
+            return
+
+        # Serve the main HTML page
         self.send_response(200)
         self.send_header('Content-type', 'text/html; charset=utf-8')
         self.end_headers()
-        
-        # 這裡加入了 CSS 樣式
+
         html = f"""
         <!DOCTYPE html>
         <html>
@@ -69,16 +79,69 @@ class CounterHandler(BaseHTTPRequestHandler):
                     }}
                     button:hover {{ background-color: var(--primary-hover); }}
                     button:active {{ transform: scale(0.98); }}
+                    .row {{ display: flex; gap: 0.5rem; }}
+                    .row button {{ width: 50%; padding: 10px; }}
                 </style>
             </head>
             <body>
                 <div class="container">
                     <h1>Counter</h1>
-                    <div class="number">{count}</div>
-                    <form method="POST">
-                        <button type="submit">Count + 1</button>
-                    </form>
+                    <div id="number" class="number">{count}</div>
+                    <div class="row">
+                        <form id="manualForm" method="POST" style="width:50%; margin:0;">
+                            <button type="submit">+1</button>
+                        </form>
+                        <button id="autoBtn" style="width:50%;">Auto: Off</button>
+                    </div>
                 </div>
+
+                <script>
+                    let autoOn = false;
+                    let autoTimer = null;
+
+                    async function fetchCount() {
+                        try {
+                            const res = await fetch('/api/count');
+                            if (res.ok) {
+                                const data = await res.json();
+                                document.getElementById('number').textContent = data.count;
+                            }
+                        } catch (e) { console.error(e); }
+                    }
+
+                    async function incOnce() {
+                        try {
+                            const res = await fetch('/inc', {method: 'POST'});
+                            if (res.ok) {
+                                const data = await res.json();
+                                document.getElementById('number').textContent = data.count;
+                            }
+                        } catch (e) { console.error(e); }
+                    }
+
+                    document.getElementById('manualForm').addEventListener('submit', async (e) => {
+                        e.preventDefault();
+                        await incOnce();
+                    });
+
+                    document.getElementById('autoBtn').addEventListener('click', () => {
+                        autoOn = !autoOn;
+                        const btn = document.getElementById('autoBtn');
+                        btn.textContent = autoOn ? 'Auto: On' : 'Auto: Off';
+                        if (autoOn) {
+                            // do one immediately then start interval
+                            incOnce();
+                            autoTimer = setInterval(incOnce, 1000);
+                        } else {
+                            clearInterval(autoTimer);
+                            autoTimer = null;
+                        }
+                    });
+
+                    // keep UI in sync
+                    setInterval(fetchCount, 1500);
+                    fetchCount();
+                </script>
             </body>
         </html>
         """
@@ -86,10 +149,21 @@ class CounterHandler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         global count
+        # AJAX increment endpoint
+        if self.path == '/inc':
+            count += 1
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json; charset=utf-8')
+            self.end_headers()
+            self.wfile.write(json.dumps({'count': count}).encode())
+            return
+
+        # fallback: treat other POSTs as manual increment then redirect
         count += 1
         self.send_response(303)
         self.send_header('Location', '/')
         self.end_headers()
+
 
 print("伺服器已啟動：http://0.0.0.0:8000")
 HTTPServer(('0.0.0.0', 8000), CounterHandler).serve_forever()
