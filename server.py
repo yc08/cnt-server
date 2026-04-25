@@ -26,21 +26,21 @@ class CounterHandler(BaseHTTPRequestHandler):
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
                 <title>SNAS Counter</title>
                 <style>
-                    :root {{
+                    :root {
                         --bg: #f0f2f5;
                         --card: #ffffff;
                         --text: #1c1e21;
                         --primary: #007bff;
                         --primary-hover: #0056b3;
-                    }}
-                    @media (prefers-color-scheme: dark) {{
-                        :root {{
+                    }
+                    @media (prefers-color-scheme: dark) {
+                        :root {
                             --bg: #18191a;
                             --card: #242526;
                             --text: #e4e6eb;
-                        }}
-                    }}
-                    body {{
+                        }
+                    }
+                    body {
                         display: flex;
                         justify-content: center;
                         align-items: center;
@@ -49,8 +49,8 @@ class CounterHandler(BaseHTTPRequestHandler):
                         background-color: var(--bg);
                         color: var(--text);
                         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-                    }}
-                    .container {{
+                    }
+                    .container {
                         background: var(--card);
                         padding: 2rem;
                         border-radius: 16px;
@@ -58,15 +58,15 @@ class CounterHandler(BaseHTTPRequestHandler):
                         text-align: center;
                         width: 90%;
                         max-width: 320px;
-                    }}
-                    h1 {{ margin-top: 0; font-size: 1.2rem; opacity: 0.8; }}
-                    .number {{
+                    }
+                    h1 { margin-top: 0; font-size: 1.2rem; opacity: 0.8; }
+                    .number {
                         font-size: 4rem;
                         font-weight: bold;
                         margin: 1.5rem 0;
                         color: var(--primary);
-                    }}
-                    button {{
+                    }
+                    button {
                         background-color: var(--primary);
                         color: white;
                         border: none;
@@ -76,11 +76,11 @@ class CounterHandler(BaseHTTPRequestHandler):
                         cursor: pointer;
                         width: 100%;
                         transition: background 0.2s, transform 0.1s;
-                    }}
-                    button:hover {{ background-color: var(--primary-hover); }}
-                    button:active {{ transform: scale(0.98); }}
-                    .row {{ display: flex; gap: 0.5rem; }}
-                    .row button {{ width: 50%; padding: 10px; }}
+                    }
+                    button:hover { background-color: var(--primary-hover); }
+                    button:active { transform: scale(0.98); }
+                    .row { display: flex; gap: 0.5rem; }
+                    .row button { width: 50%; padding: 10px; }
                 </style>
             </head>
             <body>
