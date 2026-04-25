@@ -19,7 +19,7 @@ class CounterHandler(BaseHTTPRequestHandler):
         self.send_header('Content-type', 'text/html; charset=utf-8')
         self.end_headers()
 
-        html = f"""
+        html = """
         <!DOCTYPE html>
         <html>
             <head>
@@ -86,7 +86,7 @@ class CounterHandler(BaseHTTPRequestHandler):
             <body>
                 <div class="container">
                     <h1>Counter</h1>
-                    <div id="number" class="number">{count}</div>
+                    <div id="number" class="number">__CNT__</div>
                     <div class="row">
                         <form id="manualForm" method="POST" style="width:50%; margin:0;">
                             <button type="submit">+1</button>
@@ -145,6 +145,7 @@ class CounterHandler(BaseHTTPRequestHandler):
             </body>
         </html>
         """
+        html = html.replace('__CNT__', str(count))
         self.wfile.write(html.encode())
 
     def do_POST(self):
