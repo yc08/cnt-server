@@ -1,0 +1,8 @@
+version: '3.8'
+services:
+  counter-app:
+    build: .
+    container_name: counter_server
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
